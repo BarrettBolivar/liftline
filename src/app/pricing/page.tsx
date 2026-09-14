@@ -12,11 +12,10 @@ export default function PricingPage() {
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6">
       <header className="max-w-2xl">
         <p className="mb-2 text-sm font-medium tracking-wide text-primary uppercase">Pro</p>
-        <h1 className="font-heading text-4xl text-balance">Sell the invoice, not another Insights clone</h1>
+        <h1 className="font-heading text-4xl text-balance">Pay when the DMs keep coming</h1>
         <p className="mt-4 text-muted-foreground">
-          Creators will not pay for graphs they screenshot from the app. They pay when a $400 offer
-          becomes a $1,100 counter, or when a pitch is sitting in the clipboard. This checkout is a
-          local demo — no card is charged.
+          Free is one rate card and one reply when a brand messages you. Pro is every extra pitch
+          and a kit without a watermark. This checkout is a demo — no card is charged.
         </p>
       </header>
 

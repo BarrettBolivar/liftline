@@ -21,9 +21,9 @@ const instrument = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Liftline — legal creator growth",
+  title: "Liftline — the number to send when a brand DMs",
   description:
-    "Instagram already has Insights. Liftline prices the invoice: rate cards, take/counter/walk, and the email to the brand.",
+    "A brand DMs you. You don’t know what to charge. Liftline gives you the rate, the counter, and a warning if your kit would get you dropped.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

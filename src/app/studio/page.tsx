@@ -5,11 +5,10 @@ export default function StudioPage() {
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <div className="mb-8 max-w-2xl">
         <p className="mb-2 text-sm font-medium tracking-wide text-primary uppercase">Studio</p>
-        <h1 className="font-heading text-4xl">Price the account. Do not re-graph it.</h1>
+        <h1 className="font-heading text-4xl">Paste a typical post. Get the number to send back.</h1>
         <p className="mt-3 text-muted-foreground">
-          Paste a typical post — not because we want another dashboard, but because a rate card
-          without real averages is fiction. Then: invoice, take/counter/walk, and the pitch.
-          Insights stay in the app where they belong.
+          Use last month’s average, not the one viral clip. Then: the rate, a reply if they
+          lowballed, and a check before you attach a screenshot.
         </p>
       </div>
       <Studio />

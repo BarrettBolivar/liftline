@@ -7,48 +7,55 @@ export default function HomePage() {
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
       <section className="max-w-3xl">
         <p className="mb-4 text-sm font-medium tracking-wide text-primary uppercase">
-          Off-platform on purpose
+          For the DM that just came in
         </p>
         <h1 className="font-heading text-4xl leading-tight text-balance sm:text-6xl">
-          Instagram already told you the views. It will not tell you what to charge.
+          A brand DMs you. You don’t know what to charge.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
-          Insights, scheduling, trending audio, and “post more” live inside the apps. Duplicating
-          that is a worse version of software creators already open for free. Liftline is the
-          business the platforms will not run: the rate card, the walk-away number, and the email
-          to a brand — without fake followers.
+          Liftline is the 30 seconds between that message and your answer: the rate, the counter if
+          they’re lowballing, and a warning if your own numbers would get you quietly dropped. Not
+          another Insights clone. Not fake followers.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href="/studio" />} size="lg">
-            Price the next deal
+            Get the number
           </Button>
           <Button nativeButton={false} render={<Link href="/pricing" />} variant="outline" size="lg">
-            What Pro sells
+            $19/mo when the DMs keep coming
           </Button>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2">
+      <section className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Leave this to the apps</CardTitle>
-            <CardDescription>Free, native, and they will always be better at it</CardDescription>
+            <CardDescription>Without it</CardDescription>
+            <CardTitle>You say yes to $400</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Reach, watch time, audience age, best hours, suggested sounds, captions, native
-            calendars, “your followers are waiting.” If a creator can see it in TikTok Analytics or
-            YouTube Studio, we do not rebuild it.
+            It feels like a win. It trains every next brand to send $400. You still don’t know what
+            you should have asked.
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>This is the product</CardTitle>
-            <CardDescription>Conflicts with what the apps want you to do</CardDescription>
+            <CardDescription>Without it</CardDescription>
+            <CardTitle>You freeze and ghost them</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            What a dedicated post should invoice. Whether $400 is a hobby. 30-day usage on your
-            face — or X Ads on a thread — as its own line. A pitch to the brand that should buy
-            it. A warning when your own numbers would fail a fraud check.
+            Guessing in the notes app at midnight. The brand moves on to someone who quoted a number
+            in ten minutes.
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardDescription>Without it</CardDescription>
+            <CardTitle>You send a follower screenshot</CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            If the last twelve posts don’t match, they file you as junk and never say why. Liftline
+            tells you before you hit send.
           </CardContent>
         </Card>
       </section>
@@ -56,35 +63,32 @@ export default function HomePage() {
       <section className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Rate card</CardTitle>
-            <CardDescription>Not a follower screenshot</CardDescription>
+            <CardTitle>The number</CardTitle>
+            <CardDescription>Dedicated, smaller placement, usage as its own line</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Brands still lowball nano creators because the apps never publish a price. Dedicated,
-            secondary, usage, and a three-post package — priced off typical posts, not the one viral
-            spike.
+            Priced off a typical post, not the one viral spike. On X that’s a thread, a reply
+            window, and Ads — three invoices, not a mention.
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Take / counter / walk</CardTitle>
-            <CardDescription>The apps want you to say yes</CardDescription>
+            <CardTitle>The reply</CardTitle>
+            <CardDescription>Take, counter, or walk — already written</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Spark Ads and branded content tools exist to make usage cheap. The desk tells you when
-            the offer is below floor, drafts the reply, and tells you to fix fake-looking metrics
-            before you send a kit.
+            Paste what they offered. Get a message you can send. Permission to walk is the part
+            nobody else will give you.
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>The email they will not write</CardTitle>
-            <CardDescription>Discovery is not a booking</CardDescription>
+            <CardTitle>The kit check</CardTitle>
+            <CardDescription>Before you attach the screenshot</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Creator marketplaces keep the brand on-platform. Liftline writes the off-platform pitch:
-            who should buy this series, the rate, and a 12-post screenshot promise — not a trending
-            sound.
+            If likes beat views, or 80k followers do 1,200 impressions, the studio says do not send
+            this. Brands’ fraud tools already know.
           </CardContent>
         </Card>
       </section>
