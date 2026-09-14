@@ -1,9 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  EMAIL_RE,
-  INTEREST_NOTIFY_EMAIL,
-} from "@/lib/interest";
+import { EMAIL_RE } from "@/lib/interest";
 
 const LOG_PATH = path.join(process.cwd(), "data", "interest.json");
 
@@ -30,10 +27,10 @@ export async function POST(request: Request) {
   await appendLog({ email, at: new Date().toISOString() });
 
   if (isForm) {
-    return bounceToInbox(email, homeUrl(request, "joined=1"));
+    return joinedRedirect(request, email);
   }
 
-  return Response.json({ ok: true, notify: INTEREST_NOTIFY_EMAIL });
+  return Response.json({ ok: true });
 }
 
 async function readFields(request: Request, isForm: boolean) {
@@ -82,48 +79,20 @@ function homeUrl(request: Request, query: string) {
 }
 
 function redirectHome(request: Request, query: string) {
-  return Response.redirect(homeUrl(request, query), 303);
-}
-
-function bounceToInbox(email: string, nextUrl: string) {
-  const to = escapeHtml(INTEREST_NOTIFY_EMAIL);
-  const safeEmail = escapeHtml(email);
-  const safeNext = escapeHtml(nextUrl);
-  const html = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sending…</title>
-  </head>
-  <body>
-    <form id="notify" action="https://formsubmit.co/${to}" method="post">
-      <input type="hidden" name="email" value="${safeEmail}" />
-      <input type="hidden" name="_replyto" value="${safeEmail}" />
-      <input type="hidden" name="_subject" value="Liftline interest" />
-      <input type="hidden" name="_template" value="table" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_next" value="${safeNext}" />
-      <input type="hidden" name="message" value="${safeEmail} wants to hear when Liftline is ready." />
-      <noscript><button type="submit">Continue</button></noscript>
-    </form>
-    <script>document.getElementById("notify").submit();</script>
-  </body>
-</html>`;
-
-  return new Response(html, {
-    status: 200,
-    headers: { "Content-Type": "text/html; charset=utf-8" },
+  return new Response(null, {
+    status: 303,
+    headers: { Location: homeUrl(request, query) },
   });
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+function joinedRedirect(request: Request, email: string) {
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: homeUrl(request, "joined=1"),
+      "Set-Cookie": `liftline_ping=${encodeURIComponent(email)}; Path=/; Max-Age=120; SameSite=Lax`,
+    },
+  });
 }
 
 async function appendLog(entry: Entry) {

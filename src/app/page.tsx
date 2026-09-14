@@ -1,3 +1,4 @@
+import { InboxPing } from "@/components/inbox-ping";
 import { InterestForm } from "@/components/interest-form";
 import {
   Card,
@@ -35,6 +36,7 @@ export default async function HomePage({
           fake followers.
         </p>
         <div className="mt-8">
+          <InboxPing />
           <InterestForm alreadyJoined={alreadyJoined} startError={startError} />
         </div>
       </section>

@@ -15,7 +15,7 @@ Open [http://127.0.0.1:43127](http://127.0.0.1:43127).
 
 ## Interest emails
 
-The form asks for an email and nothing else. The visitor’s browser sends that to `barrettbolivar@protonmail.com` through [FormSubmit](https://formsubmit.co). If that path is blocked, they get a one-tap mailto instead.
+The form asks for an email and nothing else. Visitors stay on Liftline and see “You’re on the list.” Their browser pings `barrettbolivar@protonmail.com` through [FormSubmit](https://formsubmit.co) in the background.
 
 The first inbound email from FormSubmit is a confirmation. Click the link in that message or later sign-ups will not reach your inbox.
 
