@@ -15,8 +15,8 @@ Open [http://127.0.0.1:43127](http://127.0.0.1:43127).
 
 ## Interest emails
 
-The form asks for an email and nothing else. Submissions go to `barrettbolivar@protonmail.com` through [FormSubmit](https://formsubmit.co).
+The form asks for an email and nothing else. The visitor’s browser sends that to `barrettbolivar@protonmail.com` through [FormSubmit](https://formsubmit.co). If that path is blocked, they get a one-tap mailto instead.
 
 The first inbound email from FormSubmit is a confirmation. Click the link in that message or later sign-ups will not reach your inbox.
 
-Override the destination with `INTEREST_NOTIFY_EMAIL` if you need to.
+Override the destination with `NEXT_PUBLIC_INTEREST_EMAIL` if you need to.

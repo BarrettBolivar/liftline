@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { INTEREST_NOTIFY_EMAIL } from "@/lib/interest";
 
-type Status = "idle" | "loading" | "ok" | "error";
+type Status = "idle" | "loading" | "ok" | "fallback" | "error";
 
 export function InterestForm() {
   const [email, setEmail] = useState("");
@@ -17,18 +18,18 @@ export function InterestForm() {
     setStatus("loading");
     setMessage("");
 
+    const trimmed = email.trim().toLowerCase();
+
     try {
       const response = await fetch("/api/interest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, website: honeypot }),
+        body: JSON.stringify({ email: trimmed, website: honeypot }),
       });
       const data = (await response.json()) as { error?: string };
       if (!response.ok) {
         throw new Error(data.error ?? "Could not send.");
       }
-      setStatus("ok");
-      setEmail("");
     } catch (error) {
       setStatus("error");
       setMessage(
@@ -36,7 +37,17 @@ export function InterestForm() {
           ? error.message
           : "Something went wrong. Try again in a minute.",
       );
+      return;
     }
+
+    const emailed = await pingInbox(trimmed);
+    if (emailed) {
+      setStatus("ok");
+      setEmail("");
+      return;
+    }
+
+    setStatus("fallback");
   }
 
   if (status === "ok") {
@@ -47,6 +58,21 @@ export function InterestForm() {
       >
         You&apos;re on the list. We&apos;ll email you when Liftline is ready.
       </p>
+    );
+  }
+
+  if (status === "fallback") {
+    const mailto = `mailto:${INTEREST_NOTIFY_EMAIL}?subject=${encodeURIComponent("Liftline interest")}&body=${encodeURIComponent(`${email.trim().toLowerCase()} wants to hear when Liftline is ready.`)}`;
+    return (
+      <div className="max-w-md space-y-2 text-sm" role="status">
+        <p className="text-foreground">
+          One tap left — your mail app will send the ping. Nothing else to fill
+          in.
+        </p>
+        <Button nativeButton={false} render={<a href={mailto} />} size="lg">
+          Send the ping
+        </Button>
+      </div>
     );
   }
 
@@ -99,4 +125,32 @@ export function InterestForm() {
       ) : null}
     </form>
   );
+}
+
+async function pingInbox(email: string) {
+  try {
+    const response = await fetch(
+      `https://formsubmit.co/ajax/${INTEREST_NOTIFY_EMAIL}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          _replyto: email,
+          _subject: "Liftline interest",
+          _template: "table",
+          _captcha: false,
+          message: `${email} wants to hear when Liftline is ready.`,
+        }),
+      },
+    );
+    if (!response.ok) return false;
+    const payload = (await response.json()) as { success?: boolean | string };
+    return payload.success === true || payload.success === "true";
+  } catch {
+    return false;
+  }
 }

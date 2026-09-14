@@ -1,9 +1,10 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  EMAIL_RE,
+  INTEREST_NOTIFY_EMAIL,
+} from "@/lib/interest";
 
-const NOTIFY_TO =
-  process.env.INTEREST_NOTIFY_EMAIL ?? "barrettbolivar@protonmail.com";
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOG_PATH = path.join(process.cwd(), "data", "interest.json");
 
 type Entry = { email: string; at: string };
@@ -27,39 +28,7 @@ export async function POST(request: Request) {
   }
 
   await appendLog({ email, at: new Date().toISOString() });
-
-  const notified = await notifyBarrett(email);
-  if (!notified) {
-    return Response.json(
-      { error: "Could not send that. Try again in a minute." },
-      { status: 502 },
-    );
-  }
-
-  return Response.json({ ok: true });
-}
-
-async function notifyBarrett(email: string) {
-  try {
-    const response = await fetch(`https://formsubmit.co/ajax/${NOTIFY_TO}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        _replyto: email,
-        _subject: "Liftline interest",
-        _template: "table",
-        _captcha: false,
-        message: `${email} wants to hear when Liftline is ready.`,
-      }),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
+  return Response.json({ ok: true, notify: INTEREST_NOTIFY_EMAIL });
 }
 
 async function appendLog(entry: Entry) {
