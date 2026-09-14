@@ -8,6 +8,7 @@ It is the off-platform business the apps will not run:
 - take / counter / walk on a real offer
 - a pitch email to a brand category that should buy the series
 - a kit check for numbers a brand fraud tool would bounce
+- on X: thread, reply window, and Ads-on-the-thread as three lines (Analytics will not price that)
 
 It does not log into social apps, clone Analytics, or sell fake followers.
 
