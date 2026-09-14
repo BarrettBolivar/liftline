@@ -1,6 +1,11 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { InterestForm } from "@/components/interest-form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function HomePage() {
   return (
@@ -13,17 +18,13 @@ export default function HomePage() {
           A brand DMs you. You don’t know what to charge.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-muted-foreground text-pretty">
-          Liftline is the 30 seconds between that message and your answer: the rate, the counter if
-          they’re lowballing, and a warning if your own numbers would get you quietly dropped. Not
-          another Insights clone. Not fake followers.
+          Liftline is the 30 seconds between that message and your answer: the
+          rate, the counter if they’re lowballing, and a warning if your own
+          numbers would get you quietly dropped. Not another Insights clone. Not
+          fake followers.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Button nativeButton={false} render={<Link href="/studio" />} size="lg">
-            Get the number
-          </Button>
-          <Button nativeButton={false} render={<Link href="/pricing" />} variant="outline" size="lg">
-            $19/mo when the DMs keep coming
-          </Button>
+        <div className="mt-8">
+          <InterestForm />
         </div>
       </section>
 
@@ -34,8 +35,8 @@ export default function HomePage() {
             <CardTitle>You say yes to $400</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            It feels like a win. It trains every next brand to send $400. You still don’t know what
-            you should have asked.
+            It feels like a win. It trains every next brand to send $400. You
+            still don’t know what you should have asked.
           </CardContent>
         </Card>
         <Card>
@@ -44,8 +45,8 @@ export default function HomePage() {
             <CardTitle>You freeze and ghost them</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Guessing in the notes app at midnight. The brand moves on to someone who quoted a number
-            in ten minutes.
+            Guessing in the notes app at midnight. The brand moves on to someone
+            who quoted a number in ten minutes.
           </CardContent>
         </Card>
         <Card>
@@ -54,8 +55,8 @@ export default function HomePage() {
             <CardTitle>You send a follower screenshot</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            If the last twelve posts don’t match, they file you as junk and never say why. Liftline
-            tells you before you hit send.
+            If the last twelve posts don’t match, they file you as junk and never
+            say why. Liftline tells you before you hit send.
           </CardContent>
         </Card>
       </section>
@@ -64,11 +65,13 @@ export default function HomePage() {
         <Card>
           <CardHeader>
             <CardTitle>The number</CardTitle>
-            <CardDescription>Dedicated, smaller placement, usage as its own line</CardDescription>
+            <CardDescription>
+              Dedicated, smaller placement, usage as its own line
+            </CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Priced off a typical post, not the one viral spike. On X that’s a thread, a reply
-            window, and Ads — three invoices, not a mention.
+            Priced off a typical post, not the one viral spike. On X that’s a
+            thread, a reply window, and Ads — three invoices, not a mention.
           </CardContent>
         </Card>
         <Card>
@@ -77,8 +80,8 @@ export default function HomePage() {
             <CardDescription>Take, counter, or walk — already written</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Paste what they offered. Get a message you can send. Permission to walk is the part
-            nobody else will give you.
+            Paste what they offered. Get a message you can send. Permission to
+            walk is the part nobody else will give you.
           </CardContent>
         </Card>
         <Card>
@@ -87,8 +90,8 @@ export default function HomePage() {
             <CardDescription>Before you attach the screenshot</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            If likes beat views, or 80k followers do 1,200 impressions, the studio says do not send
-            this. Brands’ fraud tools already know.
+            If likes beat views, or 80k followers do 1,200 impressions, Liftline
+            says do not send this. Brands’ fraud tools already know.
           </CardContent>
         </Card>
       </section>

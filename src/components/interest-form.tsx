@@ -1,0 +1,102 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+type Status = "idle" | "loading" | "ok" | "error";
+
+export function InterestForm() {
+  const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [message, setMessage] = useState("");
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("loading");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/interest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, website: honeypot }),
+      });
+      const data = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(data.error ?? "Could not send.");
+      }
+      setStatus("ok");
+      setEmail("");
+    } catch (error) {
+      setStatus("error");
+      setMessage(
+        error instanceof Error && error.message
+          ? error.message
+          : "Something went wrong. Try again in a minute.",
+      );
+    }
+  }
+
+  if (status === "ok") {
+    return (
+      <p
+        className="max-w-md rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-foreground"
+        role="status"
+      >
+        You&apos;re on the list. We&apos;ll email you when Liftline is ready.
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="flex w-full max-w-md flex-col gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
+        <label htmlFor="interest-email" className="sr-only">
+          Email
+        </label>
+        <Input
+          id="interest-email"
+          type="email"
+          name="email"
+          required
+          autoComplete="email"
+          inputMode="email"
+          placeholder="you@studio.com"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          className="h-11 flex-1 px-3 text-base md:text-sm"
+          aria-invalid={status === "error"}
+        />
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+          className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+          aria-hidden="true"
+        />
+        <Button
+          type="submit"
+          size="lg"
+          disabled={status === "loading"}
+          className="h-11 shrink-0 px-5"
+        >
+          {status === "loading" ? "Sending…" : "I'm interested"}
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Email only. No account. We&apos;ll only use it to tell you when it&apos;s
+        ready.
+      </p>
+      {status === "error" ? (
+        <p className="text-sm text-destructive" role="alert">
+          {message}
+        </p>
+      ) : null}
+    </form>
+  );
+}

@@ -36,6 +36,9 @@ yarn-error.log*
 # local agent scratch
 /agent-tools
 
+# waitlist backup log (email is the source of truth)
+/data
+
 
 # vercel
 .vercel

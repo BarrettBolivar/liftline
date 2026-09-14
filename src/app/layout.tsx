@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
-import { ProProvider } from "@/components/pro-provider";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import "./globals.css";
 
@@ -23,7 +22,7 @@ const instrument = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Liftline — the number to send when a brand DMs",
   description:
-    "A brand DMs you. You don’t know what to charge. Liftline gives you the rate, the counter, and a warning if your kit would get you dropped.",
+    "A brand DMs you. You don’t know what to charge. Liftline is the rate, the counter, and a warning if your kit would get you dropped.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -33,11 +32,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`dark ${geistSans.variable} ${geistMono.variable} ${instrument.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
-        <ProProvider>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
-        </ProProvider>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
       </body>
     </html>
   );
