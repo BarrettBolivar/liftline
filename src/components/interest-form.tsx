@@ -7,11 +7,17 @@ import { INTEREST_NOTIFY_EMAIL } from "@/lib/interest";
 
 type Status = "idle" | "loading" | "ok" | "fallback" | "error";
 
-export function InterestForm() {
+export function InterestForm({
+  alreadyJoined = false,
+  startError,
+}: {
+  alreadyJoined?: boolean;
+  startError?: string;
+}) {
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<Status>(alreadyJoined ? "ok" : "idle");
+  const [message, setMessage] = useState(startError ?? "");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,7 +83,12 @@ export function InterestForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex w-full max-w-md flex-col gap-2">
+    <form
+      method="post"
+      action="/api/interest"
+      onSubmit={onSubmit}
+      className="flex w-full max-w-md flex-col gap-2"
+    >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
         <label htmlFor="interest-email" className="sr-only">
           Email
@@ -118,9 +129,9 @@ export function InterestForm() {
         Email only. No account. We&apos;ll only use it to tell you when it&apos;s
         ready.
       </p>
-      {status === "error" ? (
+      {status === "error" || (status === "idle" && startError) ? (
         <p className="text-sm text-destructive" role="alert">
-          {message}
+          {message || startError}
         </p>
       ) : null}
     </form>

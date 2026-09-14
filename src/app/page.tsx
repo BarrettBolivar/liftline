@@ -7,7 +7,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function HomePage() {
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function HomePage({
+  searchParams,
+}: PageProps<"/">) {
+  const params = await searchParams;
+  const alreadyJoined = first(params.joined) === "1";
+  const startError =
+    first(params.error) === "email" ? "Need a real email." : undefined;
+
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
       <section className="max-w-3xl">
@@ -24,7 +35,7 @@ export default function HomePage() {
           fake followers.
         </p>
         <div className="mt-8">
-          <InterestForm />
+          <InterestForm alreadyJoined={alreadyJoined} startError={startError} />
         </div>
       </section>
 
