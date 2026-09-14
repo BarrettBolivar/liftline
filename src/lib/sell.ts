@@ -1,5 +1,5 @@
 import { money } from "@/lib/format";
-import type { GrowthPlan, Niche } from "@/lib/types";
+import type { GrowthPlan, Niche, Platform } from "@/lib/types";
 import { nicheLabels, platformLabels } from "@/lib/types";
 
 export type BrandTarget = {
@@ -81,8 +81,79 @@ const brandsByNiche: Record<Niche, BrandTarget[]> = {
   ],
 };
 
-export function brandsFor(niche: Niche): BrandTarget[] {
+const xBrandsByNiche: Record<Niche, BrandTarget[]> = {
+  beauty: [
+    { type: "Indie SPF / derm-twitter", why: "X buys arguments with sources, not bathroom lighting. A thread that shade-matches in daylight is the brief.", offer: "Dedicated thread + 24h reply window" },
+    { type: "Retail / buyer media", why: "Buyers still lurk here. A three-post thread beats a haul they cannot stock.", offer: "3-thread package aimed at operators" },
+    { type: "Ingredient / formulation", why: "Founders quote primary sources. You already talk niacinamide without a ring light.", offer: "Thread + quote-tweet the paper" },
+  ],
+  fitness: [
+    { type: "Sports-science / wearable", why: "X is where the form-check argument happens in public. Hardware brands pay for that, not a hotel-room Reel.", offer: "Thread + reply window on the study" },
+    { type: "Supplement that will show the COA", why: "If they want a gym-bro montage they are on the wrong site. Sell the label thread.", offer: "Dedicated thread, no montage" },
+    { type: "Training software / logging", why: "People who log sets already live in replies. That is the demo.", offer: "Thread + 48h in the replies" },
+  ],
+  food: [
+    { type: "CPG founder / grocer ops", why: "Cost-in-the-first-line is a thread, not a sound. Buyers screenshot that.", offer: "Dedicated thread with the actual receipt" },
+    { type: "Restaurant tools", why: "Operators argue about tickets and labor here. A Reel does not enter that room.", offer: "Thread + reply window" },
+    { type: "Commodity / spice brand", why: "One sauce, four dinners as a thread people bookmark. X Ads on it is extra.", offer: "Thread package, amplification quoted separate" },
+  ],
+  finance: [
+    { type: "Brokerage / investing app", why: "Paystub and tax threads are already the native format. Put the disclaimer on screen one.", offer: "Dedicated thread, compliance pass, reply window" },
+    { type: "B2B payments / payroll", why: "Founders buy in public here. A YouTube explainer is a different invoice.", offer: "Thread + 48h replies" },
+    { type: "Insurance that will not do a fear funnel", why: "X punishes the fear thumbnail. Sell the checklist thread.", offer: "One checklist thread" },
+  ],
+  tech: [
+    { type: "Developer tool / API", why: "Changelog and keep-or-sell threads are how this site works. X Ads on that post is a separate product.", offer: "Dedicated thread + reply window. Amplification extra." },
+    { type: "B2B SaaS with a public roadmap", why: "They want the argument in replies, not a founder-on-a-stool video.", offer: "Thread series, three weeks" },
+    { type: "Privacy / passkeys / security", why: "Deny-these-permissions is a thread people bookmark. Do not gift them Ads Manager.", offer: "Dedicated thread, 7-day X Ads quoted separate" },
+  ],
+  fashion: [
+    { type: "D2C that will talk wholesale math", why: "Outfit math and alteration cost are threads. Hauls die here.", offer: "Dedicated thread + reply window" },
+    { type: "Fabric / mill / workwear", why: "Operators and designers still lurk. Fit-from-the-side is a photo thread.", offer: "Photo thread, three looks" },
+    { type: "Footwear with a step count", why: "8k steps is a review thread, not an unboxing. Quote-tweet the lab if they have one.", offer: "Wear-test thread" },
+  ],
+  gaming: [
+    { type: "Studio community / patch notes", why: "Patch-not-trailer is native. They already have a Discord; they pay for the public thread.", offer: "Patch thread in the 48-hour window" },
+    { type: "Peripherals at your actual FPS", why: "Settings on your hardware, posted as a thread, not a battlestation Reel.", offer: "Settings thread + reply window" },
+    { type: "Anti-cheat / accessibility", why: "Underserved, loyal, and already arguing in replies.", offer: "Dedicated thread" },
+  ],
+  education: [
+    { type: "Edtech selling to teachers / ops", why: "Decode-the-prompt is a thread. Campus TikTok is a different buyer.", offer: "Thread series of three questions" },
+    { type: "Notes / research tool", why: "Findable notes with the file name in post one. Bookmark bait they can put Ads on — for a fee.", offer: "Tutorial thread, amplification extra" },
+    { type: "Publisher / course", why: "The misconception you believed is a cold open that works in 12 posts.", offer: "Dedicated thread + replies" },
+  ],
+  travel: [
+    { type: "Airline / loyalty / transit card", why: "Not-the-$80-taxi is a thread frequent flyers screenshot. X wants that spend in Ads.", offer: "Arrival thread + reply window" },
+    { type: "Hotel that will talk noise and outlets", why: "Rebook-test threads convert operators and travelers. Reels convert neither here.", offer: "Stay thread" },
+    { type: "Maps / local ops", why: "Copy-this-walk as a mapped thread. Saves are bookmarks.", offer: "Neighborhood thread" },
+  ],
+  comedy: [
+    { type: "Consumer app with a mundane pain", why: "Errand bits as a thread plus a native video. Keep the product out of post one.", offer: "Character thread, two weeks" },
+    { type: "Newsletter / media", why: "Callback character plus a link that is not the joke. X will not write this rate card.", offer: "Weekly thread + reply window" },
+    { type: "Snack / OTC / tiny tool", why: "Cameo in the bit, not a haul. Quote-tweet the bit if they want reach — priced.", offer: "Series cameo + optional amplification" },
+  ],
+};
+
+export function brandsFor(niche: Niche, platform?: Platform): BrandTarget[] {
+  if (platform === "x") return xBrandsByNiche[niche];
   return brandsByNiche[niche];
+}
+
+export function deliverableLabelsFor(plan: GrowthPlan): Record<Deliverable, string> {
+  if (plan.input.platform === "x") {
+    return {
+      dedicated: "Dedicated thread",
+      secondary: plan.rateCard.secondaryLabel,
+      usage: "X Ads on the thread (7 days)",
+      package3: "3-thread package",
+    };
+  }
+  return {
+    dedicated: "Dedicated post / video",
+    secondary: plan.rateCard.secondaryLabel,
+    usage: "Whitelisting / usage (30 days)",
+    package3: "3-post package",
+  };
 }
 
 export function askFor(plan: GrowthPlan, deliverable: Deliverable): number {
@@ -96,13 +167,16 @@ export function askFor(plan: GrowthPlan, deliverable: Deliverable): number {
 export function evaluateDeal(plan: GrowthPlan, offer: number, deliverable: Deliverable): DealAdvice {
   const ask = askFor(plan, deliverable);
   const floor = Math.round(ask * 0.72);
-  const label = deliverableLabels[deliverable];
+  const labels = deliverableLabelsFor(plan);
+  const label = labels[deliverable];
+  const isX = plan.input.platform === "x";
+  const kitNoun = isX ? "last 12 posts from Analytics" : "12-post screenshot";
 
   if (plan.verdict === "inflated") {
     return {
       call: "fix-first",
       headline: "Do not send a kit until the numbers are honest",
-      why: "A brand that pays on fake reach can claw back the invoice and you still eat the FTC risk. Clean the last 12 posts first. Then quote the rate card.",
+      why: `A brand that pays on fake reach can claw back the invoice and you still eat the FTC risk. Clean the ${kitNoun} first. Then quote the rate card.`,
       ask,
       floor,
       counterScript: `Thanks for thinking of @${plan.handleLabel}. I need to pass for now — my public metrics don't match the last 12 posts, and I won't sell a number I can't screenshot. Happy to reopen when the work is current.`,
@@ -113,10 +187,14 @@ export function evaluateDeal(plan: GrowthPlan, offer: number, deliverable: Deliv
     return {
       call: "counter",
       headline: "Quote the card. Don't wait for them to invent a number.",
-      why: "Blank offers are how creators get paid in ‘exposure.’ Send the dedicated rate and a 3-post package.",
+      why: isX
+        ? "Blank offers on X usually mean they want a mention. Send the thread rate and the reply window. Do not gift Ads Manager."
+        : "Blank offers are how creators get paid in ‘exposure.’ Send the dedicated rate and a 3-post package.",
       ask,
       floor,
-      counterScript: `For a ${label.toLowerCase()} the rate is ${money(ask)}, usage extra. Package of three is ${money(plan.rateCard.package3)}. I can start next week if that works.`,
+      counterScript: isX
+        ? `For a ${label.toLowerCase()} the rate is ${money(ask)}. Reply window is ${money(plan.rateCard.secondary)}. If you want X Ads on the thread, that's ${money(plan.rateCard.usage)} extra — I don't bundle it. Three threads is ${money(plan.rateCard.package3)}.`
+        : `For a ${label.toLowerCase()} the rate is ${money(ask)}, usage extra. Package of three is ${money(plan.rateCard.package3)}. I can start next week if that works.`,
     };
   }
 
@@ -135,36 +213,72 @@ export function evaluateDeal(plan: GrowthPlan, offer: number, deliverable: Deliv
     return {
       call: "counter",
       headline: `Counter to ${money(ask)}, don't split the difference into the floor`,
-      why: "Meeting in the middle of a lowball still underprices you. Quote the card. Offer a smaller deliverable if they cannot move.",
+      why: isX
+        ? "Meeting in the middle of a lowball still underprices you. Quote the thread. If they cannot move, sell the reply window, not a single image post."
+        : "Meeting in the middle of a lowball still underprices you. Quote the card. Offer a smaller deliverable if they cannot move.",
       ask,
       floor,
-      counterScript: `I can do the ${label.toLowerCase()} at ${money(ask)}, or we shrink the scope to ${plan.rateCard.secondaryLabel.toLowerCase()} at ${money(plan.rateCard.secondary)}. Usage is ${money(plan.rateCard.usage)} extra. Dates I can hold: two options next month.`,
+      counterScript: isX
+        ? `I can do the ${label.toLowerCase()} at ${money(ask)}, or we shrink to a ${plan.rateCard.secondaryLabel.toLowerCase()} at ${money(plan.rateCard.secondary)}. Putting X Ads on it is ${money(plan.rateCard.usage)} extra. I can hold two dates next month.`
+        : `I can do the ${label.toLowerCase()} at ${money(ask)}, or we shrink the scope to ${plan.rateCard.secondaryLabel.toLowerCase()} at ${money(plan.rateCard.secondary)}. Usage is ${money(plan.rateCard.usage)} extra. Dates I can hold: two options next month.`,
     };
   }
 
   if (offer < ask) {
     return {
       call: "counter",
-      headline: "Close to the card — trade usage or a second asset, don't just discount",
-      why: "A 10–20% haircut is how rates die. If they need a deal, add a Story/Short or shorten usage, don't silently drop the number.",
+      headline: isX
+        ? "Close to the card — trade the reply window or drop amplification, don't just discount"
+        : "Close to the card — trade usage or a second asset, don't just discount",
+      why: isX
+        ? "X wants the amplification inside Ads Manager for cheap. If they need a deal, shorten the reply window or drop the 7-day Ads line. Do not silently cut the thread rate."
+        : "A 10–20% haircut is how rates die. If they need a deal, add a Story/Short or shorten usage, don't silently drop the number.",
       ask,
       floor,
-      counterScript: `We're close. I can lock ${money(offer)} if usage is 14 days instead of 30, or keep 30-day usage at ${money(ask)}. Either works on my side.`,
+      counterScript: isX
+        ? `We're close. I can lock ${money(offer)} if we skip X Ads on the thread, or keep amplification at ${money(ask)} for the ${label.toLowerCase()}. Either works.`
+        : `We're close. I can lock ${money(offer)} if usage is 14 days instead of 30, or keep 30-day usage at ${money(ask)}. Either works on my side.`,
     };
   }
 
   return {
     call: "take",
-    headline: "Take it, then put the usage in writing",
-    why: `${money(offer)} clears the ${money(ask)} card for this deliverable. Confirm deliverables, posting window, and whether they can run ads on your face.`,
+    headline: isX ? "Take it, then put Ads and the reply window in writing" : "Take it, then put the usage in writing",
+    why: isX
+      ? `${money(offer)} clears the ${money(ask)} card. Confirm the thread length, how long you live in replies, and whether they can run X Ads on it.`
+      : `${money(offer)} clears the ${money(ask)} card for this deliverable. Confirm deliverables, posting window, and whether they can run ads on your face.`,
     ask,
     floor,
-    counterScript: `Yes — ${money(offer)} for the ${label.toLowerCase()}, one round of notes, post within 14 days of product landing. 30-day paid usage is ${money(plan.rateCard.usage)} extra if you want it. I'll send the one-pager.`,
+    counterScript: isX
+      ? `Yes — ${money(offer)} for the ${label.toLowerCase()}, one round of notes, up within 7 days of brief. 24–48h reply window is ${money(plan.rateCard.secondary)}. X Ads on the thread is ${money(plan.rateCard.usage)} extra if you want it. I'll send the one-pager.`
+      : `Yes — ${money(offer)} for the ${label.toLowerCase()}, one round of notes, post within 14 days of product landing. 30-day paid usage is ${money(plan.rateCard.usage)} extra if you want it. I'll send the one-pager.`,
   };
 }
 
 export function pitchEmail(plan: GrowthPlan, brand: BrandTarget): string {
   const { input, handleLabel, rateCard } = plan;
+  const labels = deliverableLabelsFor(plan);
+  if (input.platform === "x") {
+    return `Subject: ${brand.type} × @${handleLabel} — ${brand.offer}
+
+Hi —
+
+I'm @${handleLabel} on X (${compactFollowers(input.followers)} followers, ${nicheLabels[input.niche]}). A typical post does about ${compactFollowers(input.avgViews)} impressions.
+
+${brand.why}
+
+What I'd make: ${brand.offer}.
+${labels.dedicated}: ${money(rateCard.dedicated)}
+${labels.secondary}: ${money(rateCard.secondary)}
+${labels.usage}: ${money(rateCard.usage)}
+${labels.package3}: ${money(rateCard.package3)}
+
+I send a screenshot of the last 12 posts from Analytics so you're not buying a ratio from 2021. I don't sell fake followers, and I don't throw X Ads in for free.
+
+If there's a brief in the next month, I can hold two dates.
+
+— @${handleLabel}`;
+  }
   return `Subject: ${brand.type} × @${handleLabel} — ${brand.offer}
 
 Hi —
@@ -184,6 +298,9 @@ If there's a brief in the next month, I can hold two dates.
 }
 
 export function pitchDm(plan: GrowthPlan, brand: BrandTarget): string {
+  if (plan.input.platform === "x") {
+    return `Hey — @${plan.handleLabel} on X, ${nicheLabels[plan.input.niche]}. ${brand.why} A dedicated thread is ${money(plan.rateCard.dedicated)}; X Ads on it is extra. I can send last-12 Analytics if useful.`;
+  }
   return `Hey — @${plan.handleLabel}, ${nicheLabels[plan.input.niche]} on ${platformLabels[plan.input.platform]}. ${brand.why} Dedicated is ${money(plan.rateCard.dedicated)}. I can send the 12-post kit if useful.`;
 }
 

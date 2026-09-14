@@ -102,10 +102,11 @@ function rateCard(input: AccountInput, er: number, bench: number): RateCard {
     secondaryLabel = "Dedicated Short";
     note = "Integrations price closer to a $20–$40 CPM on typical views. Shorts are add-ons, not the invoice.";
   } else {
-    dedicated = followers * 0.006 * quality;
+    dedicated = Math.max(followers * 0.008, avgViews * 0.012) * quality;
     secondary = dedicated * 0.5;
-    secondaryLabel = "Thread + replies";
-    note = "X pays less per follower. Sell a thread plus a reply window, not a single image post.";
+    secondaryLabel = "Reply window (24–48h)";
+    note =
+      "X will try to park the budget in Ads Manager. Brands still buy threads. Invoice the thread and the reply window; amplification is a third line. A single image post is not a deliverable.";
   }
 
   const floor = followers < 3000 ? 50 : followers < 10_000 ? 75 : 100;
@@ -125,19 +126,21 @@ function flagsFor(input: AccountInput, er: number, views: number, comments: numb
     flags.push({
       id: "likes-gt-views",
       severity: "danger",
-      title: "Likes exceed views",
+      title: platform === "x" ? "Likes exceed impressions" : "Likes exceed views",
       detail:
         "That cannot happen on a real post. Either the numbers are mixed across posts, or someone sold you engagement. Do not send this screenshot to a brand.",
     });
   }
 
-  if (followers >= 8000 && views < 5 && (platform === "tiktok" || platform === "instagram" || platform === "youtube")) {
+  if (followers >= 8000 && views < (platform === "x" ? 4 : 5)) {
     flags.push({
       id: "dead-reach",
       severity: "danger",
       title: "Reach does not match the follower count",
       detail:
-        "A typical healthy account still puts 8–40% of followers (or more on TikTok) in front of a post. Numbers this low usually mean bought followers, a banned-for-spam history, or an audience that left.",
+        platform === "x"
+          ? "A living X account still puts a few percent of followers in front of a typical post, often more when the For You surface is working. Numbers this low usually mean bought followers, a spam limit, or an audience that left. Brands who buy threads will notice."
+          : "A typical healthy account still puts 8–40% of followers (or more on TikTok) in front of a post. Numbers this low usually mean bought followers, a banned-for-spam history, or an audience that left.",
     });
   }
 
@@ -145,9 +148,11 @@ function flagsFor(input: AccountInput, er: number, views: number, comments: numb
     flags.push({
       id: "comment-desert",
       severity: "danger",
-      title: "Almost no comments relative to likes",
+      title: platform === "x" ? "Almost no replies relative to likes" : "Almost no comments relative to likes",
       detail:
-        "Purchased likes rarely come with conversation. Real posts in your size band usually see comments at 1–5% of likes. Brands’ fraud tools look for this first.",
+        platform === "x"
+          ? "The thing a brand is buying on X is the argument in the replies. Purchased likes without replies is a dead thread. Do not send this kit."
+          : "Purchased likes rarely come with conversation. Real posts in your size band usually see comments at 1–5% of likes. Brands’ fraud tools look for this first.",
     });
   }
 
@@ -182,7 +187,8 @@ function flagsFor(input: AccountInput, er: number, views: number, comments: numb
   } else if (
     (platform === "tiktok" && postsPerWeek > 21) ||
     (platform === "instagram" && postsPerWeek > 14) ||
-    (platform === "youtube" && postsPerWeek > 8)
+    (platform === "youtube" && postsPerWeek > 8) ||
+    (platform === "x" && postsPerWeek > 40)
   ) {
     flags.push({
       id: "spam-cadence",
@@ -257,6 +263,9 @@ function tacticsFor(input: AccountInput): string[] {
   if (input.platform === "instagram") {
     shared.push("Stories should add a day, not recycle the Reel. Polls and add-yours are cheap distribution if they are real.");
   }
+  if (input.platform === "x") {
+    shared.push("Sell a thread plus a reply window. X Ads on that thread is a third line — the site will try to make it free.");
+  }
   if (input.goal !== "followers") {
     shared.push("Media kit: 12-post screenshot, audience geo if you have it, three packages, and a usage-rights line. No fake follower count.");
   }
@@ -266,8 +275,8 @@ function tacticsFor(input: AccountInput): string[] {
 const avoid = [
   "Buying followers, likes, views, comments, or ‘active bots.’ US FTC rule 16 CFR 465.8 makes selling or buying fake influence indicators illegal for commercial use.",
   "Follow/unfollow, mass DMs, and engagement pods. Those are terms-of-service bans and they train a junk audience.",
-  "Browser bots that log into Instagram, TikTok, or YouTube like a person. Official APIs exist for scheduling. Scrapers and login bots get accounts disabled and can cross into computer-access laws.",
-  "Screenshotting a peak Reel as if it were average. Brands pull the last 12 posts themselves.",
+  "Browser bots that log into Instagram, TikTok, YouTube, or X like a person. Official APIs exist for scheduling. Scrapers and login bots get accounts disabled and can cross into computer-access laws.",
+  "Screenshotting a peak Reel or a ratio from 2021 as if it were average. Brands pull the last 12 posts themselves.",
 ];
 
 function ninetyDay(
@@ -363,6 +372,17 @@ export const samples: Record<string, AccountInput> = {
     avgLikes: 110,
     avgComments: 22,
     postsPerWeek: 1,
+    goal: "deals",
+  },
+  devyn: {
+    handle: "devynshipped",
+    platform: "x",
+    niche: "tech",
+    followers: 18600,
+    avgViews: 14200,
+    avgLikes: 210,
+    avgComments: 34,
+    postsPerWeek: 8,
     goal: "deals",
   },
 };

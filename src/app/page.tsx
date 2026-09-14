@@ -47,9 +47,8 @@ export default function HomePage() {
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             What a dedicated post should invoice. Whether $400 is a hobby. 30-day usage on your
-            face as its own line. A pitch to a sunscreen brand, not another hook template. A warning
-            when your own numbers would fail a brand’s fraud check — something the platform will
-            only handle by silently limiting you.
+            face — or X Ads on a thread — as its own line. A pitch to the brand that should buy
+            it. A warning when your own numbers would fail a fraud check.
           </CardContent>
         </Card>
       </section>

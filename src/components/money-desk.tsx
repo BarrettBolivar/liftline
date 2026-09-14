@@ -19,7 +19,7 @@ import { usePro } from "@/components/pro-provider";
 import { money } from "@/lib/format";
 import {
   brandsFor,
-  deliverableLabels,
+  deliverableLabelsFor,
   evaluateDeal,
   FREE_PITCH_COUNT,
   pitchDm,
@@ -28,15 +28,16 @@ import {
 } from "@/lib/sell";
 import type { GrowthPlan } from "@/lib/types";
 
-const deliverables = Object.keys(deliverableLabels) as Deliverable[];
-
 function isDeliverable(value: unknown): value is Deliverable {
-  return deliverables.includes(value as Deliverable);
+  return ["dedicated", "secondary", "usage", "package3"].includes(value as string);
 }
 
 export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
   const { isPro, unlock } = usePro();
-  const brands = brandsFor(plan.input.niche);
+  const isX = plan.input.platform === "x";
+  const labels = deliverableLabelsFor(plan);
+  const deliverables = Object.keys(labels) as Deliverable[];
+  const brands = brandsFor(plan.input.niche, plan.input.platform);
   const [deliverable, setDeliverable] = useState<Deliverable>("dedicated");
   const [offer, setOffer] = useState(() => Math.round(plan.rateCard.dedicated * 0.4));
   const [brandIndex, setBrandIndex] = useState(0);
@@ -55,8 +56,9 @@ export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
         <CardHeader>
           <CardTitle>Deal desk</CardTitle>
           <CardDescription>
-            TikTok will not tell you to walk. Instagram will not draft the counter. Paste what they
-            offered.
+            {isX
+              ? "X will not tell you to walk. They want the spend in Ads Manager. Paste what the brand offered."
+              : "TikTok will not tell you to walk. Instagram will not draft the counter. Paste what they offered."}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -65,7 +67,7 @@ export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
               <Label>Deliverable</Label>
               <Select
                 value={deliverable}
-                items={deliverableLabels}
+                items={labels}
                 onValueChange={(value) => {
                   if (isDeliverable(value)) setDeliverable(value);
                 }}
@@ -76,7 +78,7 @@ export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
                 <SelectContent>
                   {deliverables.map((item) => (
                     <SelectItem key={item} value={item}>
-                      {item === "secondary" ? plan.rateCard.secondaryLabel : deliverableLabels[item]}
+                      {labels[item]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -117,8 +119,10 @@ export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
         <CardHeader>
           <CardTitle>Brands that should pay for this series</CardTitle>
           <CardDescription>
-            {plan.series.name}. Not a trending-audio list — a category of advertiser who already
-            buys this plot.
+            {plan.series.name}.{" "}
+            {isX
+              ? "Not a For You trend list — the category of advertiser that already buys threads in this plot."
+              : "Not a trending-audio list — a category of advertiser who already buys this plot."}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3">
@@ -143,8 +147,8 @@ export function MoneyDesk({ plan }: { plan: GrowthPlan }) {
             <div className="grid gap-3 rounded-xl border border-dashed px-4 py-6">
               <p className="font-medium">The other two pitches are Studio Pro</p>
               <p className="text-sm text-muted-foreground">
-                Platforms already suggest sounds. They will not email a sunscreen brand for you, or
-                price 30-day usage on your face. That is the paid product.
+                Platforms already have Analytics. They will not email a brand for you, or price{" "}
+                {isX ? "X Ads on your thread" : "30-day usage on your face"}. That is the paid product.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button onClick={unlock}>Unlock Pro (demo, no card)</Button>

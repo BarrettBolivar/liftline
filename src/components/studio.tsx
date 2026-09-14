@@ -27,6 +27,7 @@ import { MoneyDesk } from "@/components/money-desk";
 import { usePro } from "@/components/pro-provider";
 import { buildPlan, samples } from "@/lib/engine";
 import { compactNumber, money } from "@/lib/format";
+import { deliverableLabelsFor } from "@/lib/sell";
 import {
   goalLabels,
   goals,
@@ -95,7 +96,7 @@ export function Studio() {
           <CardTitle>Typical post, not Insights</CardTitle>
           <CardDescription>
             The apps already have the graphs. We need one honest average so the invoice is not a
-            fantasy. Nothing here logs into Instagram, TikTok, or YouTube.
+            fantasy. Nothing here logs into Instagram, TikTok, YouTube, or X.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -148,12 +149,12 @@ export function Studio() {
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <NumberField
-              label="Followers / subs"
+              label={form.platform === "youtube" ? "Subscribers" : "Followers"}
               value={form.followers}
               onChange={(followers) => setForm({ ...form, followers })}
             />
             <NumberField
-              label="Avg views"
+              label={form.platform === "x" ? "Avg impressions" : "Avg views"}
               value={form.avgViews}
               onChange={(avgViews) => setForm({ ...form, avgViews })}
             />
@@ -163,7 +164,7 @@ export function Studio() {
               onChange={(avgLikes) => setForm({ ...form, avgLikes })}
             />
             <NumberField
-              label="Avg comments"
+              label={form.platform === "x" ? "Avg replies" : "Avg comments"}
               value={form.avgComments}
               onChange={(avgComments) => setForm({ ...form, avgComments })}
             />
@@ -212,6 +213,9 @@ export function Studio() {
             </Button>
             <Button variant="outline" size="sm" onClick={() => loadSample("priya")}>
               Priya, small YT
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => loadSample("devyn")}>
+              Devyn, X tech
             </Button>
           </div>
         </CardContent>
@@ -265,7 +269,7 @@ function EmptyState() {
         </CardDescription>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
-        Try Maya (bookable), Jax (do not send that kit), or Priya (small but honest).
+        Try Maya (bookable), Jax (do not send that kit), Priya (small but honest), or Devyn (X thread).
       </CardContent>
     </Card>
   );
@@ -273,6 +277,8 @@ function EmptyState() {
 
 function Results({ plan }: { plan: GrowthPlan }) {
   const { isPro } = usePro();
+  const labels = deliverableLabelsFor(plan);
+  const isX = plan.input.platform === "x";
   const verdictStyle =
     plan.verdict === "inflated"
       ? "text-destructive"
@@ -326,14 +332,15 @@ function Results({ plan }: { plan: GrowthPlan }) {
         </TabsList>
         <TabsContent value="invoice" className="grid gap-3 pt-3">
           <p className="text-sm text-muted-foreground">
-            Follower count is not a price list. Usage (Spark Ads / whitelisting) is a separate
-            product the apps would rather you give away.
+            {isX
+              ? "Follower count is not a price list. A thread, a reply window, and X Ads on that thread are three products. The site would rather you give the third one away."
+              : "Follower count is not a price list. Usage (Spark Ads / whitelisting) is a separate product the apps would rather you give away."}
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Rate label="Dedicated post / video" value={money(plan.rateCard.dedicated)} />
-            <Rate label={plan.rateCard.secondaryLabel} value={money(plan.rateCard.secondary)} />
-            <Rate label="Whitelisting / usage (30 days)" value={money(plan.rateCard.usage)} />
-            <Rate label="3-post package" value={money(plan.rateCard.package3)} />
+            <Rate label={labels.dedicated} value={money(plan.rateCard.dedicated)} />
+            <Rate label={labels.secondary} value={money(plan.rateCard.secondary)} />
+            <Rate label={labels.usage} value={money(plan.rateCard.usage)} />
+            <Rate label={labels.package3} value={money(plan.rateCard.package3)} />
           </div>
           <p className="text-sm text-muted-foreground">{plan.rateCard.note}</p>
           <p className="text-sm">
@@ -350,8 +357,9 @@ function Results({ plan }: { plan: GrowthPlan }) {
         </TabsContent>
         <TabsContent value="kit" className="grid gap-3 pt-3">
           <p className="text-sm text-muted-foreground">
-            This is not another engagement graph. It is whether you should attach a 12-post
-            screenshot to a pitch — something the platform will never say out loud.
+            This is not another engagement graph. It is whether you should attach{" "}
+            {isX ? "last-12 Analytics" : "a 12-post screenshot"} to a pitch — something the
+            platform will never say out loud.
           </p>
           {plan.flags.map((flag) => (
             <Alert key={flag.id} variant={flag.severity === "danger" ? "destructive" : "default"}>
@@ -406,10 +414,12 @@ function Rate({ label, value }: { label: string; value: string }) {
 
 function mediaKitText(plan: GrowthPlan, isPro: boolean): string {
   const { input, rateCard: card, handleLabel } = plan;
+  const labels = deliverableLabelsFor(plan);
+  const reach = input.platform === "x" ? "impressions" : "views";
   const lines = [
     `Media kit — @${handleLabel}`,
-    `${platformLabels[input.platform]} · ${nicheLabels[input.niche]} · typical ${compactNumber(input.avgViews)} views`,
-    `Dedicated ${money(card.dedicated)} · ${card.secondaryLabel} ${money(card.secondary)} · 30-day usage ${money(card.usage)} · 3-post ${money(card.package3)}`,
+    `${platformLabels[input.platform]} · ${nicheLabels[input.niche]} · typical ${compactNumber(input.avgViews)} ${reach}`,
+    `${labels.dedicated} ${money(card.dedicated)} · ${labels.secondary} ${money(card.secondary)} · ${labels.usage} ${money(card.usage)} · ${labels.package3} ${money(card.package3)}`,
     "",
     `Show: ${plan.series.name}`,
     plan.series.description,
@@ -418,7 +428,9 @@ function mediaKitText(plan: GrowthPlan, isPro: boolean): string {
     "",
     "Authenticity",
     plan.verdictSummary,
-    "I send a 12-post screenshot. I do not sell fake followers.",
+    input.platform === "x"
+      ? "I send last-12 posts from Analytics. I do not sell fake followers, and I do not throw X Ads in for free."
+      : "I send a 12-post screenshot. I do not sell fake followers.",
   ];
   if (!isPro) {
     lines.push("", "Prepared with Liftline Free — upgrade for a kit without this line.");
