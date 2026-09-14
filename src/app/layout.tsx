@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { ProProvider } from "@/components/pro-provider";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import "./globals.css";
 
@@ -22,7 +23,7 @@ const instrument = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Liftline — legal creator growth",
   description:
-    "Fake followers are illegal to sell. Liftline is the other product: diagnostics, a 14-day posting plan, and a rate card brands can believe.",
+    "Instagram already has Insights. Liftline prices the invoice: rate cards, take/counter/walk, and the email to the brand.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -32,9 +33,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`dark ${geistSans.variable} ${geistMono.variable} ${instrument.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+        <ProProvider>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+        </ProProvider>
       </body>
     </html>
   );

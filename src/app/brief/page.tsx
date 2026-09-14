@@ -86,11 +86,10 @@ export default function BriefPage() {
           you want to be in.
         </p>
         <p className="text-muted-foreground">
-          Legal growth software is crowded at the top (Later’s influencer business has been
-          compounding; Buffer charges about $25–$110/mo for scheduling). It is not crowded at the
-          bottom: nano creators who need a rate card and a warning before they buy 5,000 followers
-          from a Telegram bot. Brands will also pay to detect the fake ones. Fraud detection is
-          listed as a growth driver in every influencer-platform report from 2025–2026.
+          Legal growth software is crowded at the top when it clones the apps (Later, Buffer,
+          Metricool — scheduling and graphs). Creators already have Insights for free. They pay
+          for the invoice the platform will not publish: a rate card, a walk-away number, and a
+          pitch. Brands also pay to catch fake kits. That is the product, not another reach chart.
         </p>
         <Card>
           <CardHeader>
@@ -139,9 +138,8 @@ export default function BriefPage() {
       <section className="grid gap-3">
         <h2 className="font-heading text-2xl">4. What Liftline will not do</h2>
         <p className="text-muted-foreground">
-          It will not log into anyone’s Instagram. It will not auto-like, auto-follow, or auto-view.
-          It will not sell a follower pack. If you want that, you want a product the FTC has already
-          described as illegal to commercialize.
+          It will not log into anyone’s Instagram. It will not rebuild Analytics, trending audio,
+          or a posting calendar. It will not auto-like, auto-follow, or sell a follower pack.
         </p>
         <Button nativeButton={false} render={<Link href="/studio" />} size="lg" className="w-fit">
           Open the studio

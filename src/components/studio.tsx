@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -24,8 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MoneyDesk } from "@/components/money-desk";
+import { usePro } from "@/components/pro-provider";
 import { buildPlan, samples } from "@/lib/engine";
-import { compactNumber, money, percent } from "@/lib/format";
+import { compactNumber, money } from "@/lib/format";
 import {
   goalLabels,
   goals,
@@ -91,9 +92,10 @@ export function Studio() {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
       <Card className="h-fit lg:sticky lg:top-20">
         <CardHeader>
-          <CardTitle>Account snapshot</CardTitle>
+          <CardTitle>Typical post, not Insights</CardTitle>
           <CardDescription>
-            Use last month’s typical post, not the one viral clip. Nothing here logs into Instagram, TikTok, or YouTube.
+            The apps already have the graphs. We need one honest average so the invoice is not a
+            fantasy. Nothing here logs into Instagram, TikTok, or YouTube.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -199,7 +201,7 @@ export function Studio() {
             </Alert>
           ) : null}
           <Button size="lg" className="w-full" onClick={() => run()}>
-            Build a legal growth plan
+            Build the invoice
           </Button>
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => loadSample("maya")}>
@@ -255,19 +257,22 @@ function EmptyState() {
   return (
     <Card className="flex min-h-[28rem] flex-col justify-center border-dashed">
       <CardHeader>
-        <CardTitle>No plan yet</CardTitle>
+        <CardTitle>No invoice yet</CardTitle>
         <CardDescription>
-          Paste real averages from the last 8–12 posts. The studio will score health, flag numbers that look purchased, write a 14-day calendar, and price a rate card a brand could actually believe.
+          Insights already counted the views. This studio prices the deal, flags numbers a brand’s
+          fraud tool would bounce, and writes the email. Try a sample if you want a clean kit, a
+          fake-looking one, or a small channel.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
-        Try the sample accounts if you want to see a clean profile, a suspicious one, and a small channel that is under-posted.
+        Try Maya (bookable), Jax (do not send that kit), or Priya (small but honest).
       </CardContent>
     </Card>
   );
 }
 
 function Results({ plan }: { plan: GrowthPlan }) {
+  const { isPro } = usePro();
   const verdictStyle =
     plan.verdict === "inflated"
       ? "text-destructive"
@@ -275,7 +280,7 @@ function Results({ plan }: { plan: GrowthPlan }) {
         ? "text-amber-600 dark:text-amber-400"
         : "text-emerald-700 dark:text-emerald-400";
 
-  const kit = useMemo(() => mediaKitText(plan), [plan]);
+  const kit = useMemo(() => mediaKitText(plan, isPro), [plan, isPro]);
 
   function downloadKit() {
     const blob = new Blob([kit], { type: "text/plain;charset=utf-8" });
@@ -295,42 +300,59 @@ function Results({ plan }: { plan: GrowthPlan }) {
             <Badge variant="secondary">@{plan.handleLabel}</Badge>
             <Badge variant="outline">{platformLabels[plan.input.platform]}</Badge>
             <Badge variant="outline">{plan.tier}</Badge>
+            <Badge variant={plan.verdict === "inflated" ? "destructive" : "outline"}>
+              {plan.verdict === "inflated"
+                ? "Do not send this kit"
+                : plan.verdict === "fixable"
+                  ? "Kit is weak, still real"
+                  : "Kit can go to a brand"}
+            </Badge>
           </div>
           <CardTitle className={verdictStyle}>
             {plan.verdict === "inflated"
-              ? "These metrics look purchased"
-              : plan.verdict === "fixable"
-                ? "Real account, leaking reach"
-                : "Numbers a brand can trust"}
+              ? "A brand fraud check would bounce this"
+              : `Dedicated should invoice ${money(plan.rateCard.dedicated)}`}
           </CardTitle>
           <CardDescription>{plan.verdictSummary}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <Progress value={plan.healthScore} className="sm:col-span-2">
-            <ProgressLabel>Health</ProgressLabel>
-            <ProgressValue />
-          </Progress>
-          <Progress value={plan.authenticityScore}>
-            <ProgressLabel>Authenticity</ProgressLabel>
-            <ProgressValue />
-          </Progress>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <Stat label="Engagement" value={percent(plan.engagementRate)} hint={`Healthy band ~${percent(plan.benchmarkEngagement)}`} />
-            <Stat label="Views / followers" value={percent(plan.viewRate, 0)} hint="TikTok often exceeds 100%" />
-            <Stat label="Comments / likes" value={percent(plan.commentRatio)} hint="Real talk sits near 1–5%" />
-            <Stat label="Cadence" value={`${plan.input.postsPerWeek}/wk`} hint={plan.cadence} />
-          </div>
-        </CardContent>
       </Card>
 
-      <Tabs defaultValue="flags">
+      <Tabs defaultValue="invoice">
         <TabsList className="h-auto w-full flex-wrap justify-start">
-          <TabsTrigger value="flags">Flags</TabsTrigger>
-          <TabsTrigger value="plan">14-day plan</TabsTrigger>
-          <TabsTrigger value="rates">Rate card</TabsTrigger>
-          <TabsTrigger value="avoid">Illegal line</TabsTrigger>
+          <TabsTrigger value="invoice">Invoice</TabsTrigger>
+          <TabsTrigger value="desk">Deal desk</TabsTrigger>
+          <TabsTrigger value="kit">Kit check</TabsTrigger>
+          <TabsTrigger value="line">Illegal line</TabsTrigger>
         </TabsList>
-        <TabsContent value="flags" className="grid gap-3 pt-3">
+        <TabsContent value="invoice" className="grid gap-3 pt-3">
+          <p className="text-sm text-muted-foreground">
+            Follower count is not a price list. Usage (Spark Ads / whitelisting) is a separate
+            product the apps would rather you give away.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Rate label="Dedicated post / video" value={money(plan.rateCard.dedicated)} />
+            <Rate label={plan.rateCard.secondaryLabel} value={money(plan.rateCard.secondary)} />
+            <Rate label="Whitelisting / usage (30 days)" value={money(plan.rateCard.usage)} />
+            <Rate label="3-post package" value={money(plan.rateCard.package3)} />
+          </div>
+          <p className="text-sm text-muted-foreground">{plan.rateCard.note}</p>
+          <p className="text-sm">
+            Believable inbound range if the kit stays honest: {money(plan.ninetyDay.dealLow)}–
+            {money(plan.ninetyDay.dealHigh)}. {plan.ninetyDay.caveat}
+          </p>
+          <Button variant="outline" onClick={downloadKit}>
+            <Download data-icon="inline-start" />
+            {isPro ? "Download kit" : "Download kit (free watermark)"}
+          </Button>
+        </TabsContent>
+        <TabsContent value="desk" className="pt-3">
+          <MoneyDesk key={plan.generatedAt} plan={plan} />
+        </TabsContent>
+        <TabsContent value="kit" className="grid gap-3 pt-3">
+          <p className="text-sm text-muted-foreground">
+            This is not another engagement graph. It is whether you should attach a 12-post
+            screenshot to a pitch — something the platform will never say out loud.
+          </p>
           {plan.flags.map((flag) => (
             <Alert key={flag.id} variant={flag.severity === "danger" ? "destructive" : "default"}>
               {flag.severity === "danger" ? (
@@ -344,65 +366,14 @@ function Results({ plan }: { plan: GrowthPlan }) {
               <AlertDescription>{flag.detail}</AlertDescription>
             </Alert>
           ))}
-          <Card>
-            <CardHeader>
-              <CardTitle>Named series</CardTitle>
-              <CardDescription>{plan.series.name}</CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{plan.series.description}</CardContent>
-          </Card>
-          <ul className="grid gap-2 text-sm">
-            {plan.tactics.map((tactic) => (
-              <li key={tactic} className="rounded-lg bg-muted/60 px-3 py-2">
-                {tactic}
-              </li>
-            ))}
-          </ul>
         </TabsContent>
-        <TabsContent value="plan" className="grid gap-3 pt-3">
-          <p className="text-sm text-muted-foreground">{plan.cadence}</p>
-          <div className="grid gap-2">
-            {plan.calendar.map((post) => (
-              <div
-                key={post.day}
-                className="grid gap-1 rounded-xl border border-border/80 px-3 py-3 sm:grid-cols-[3.5rem_1fr]"
-              >
-                <div className="font-heading text-lg text-muted-foreground">D{post.day}</div>
-                <div>
-                  <p className="font-medium">{post.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {post.format} · {post.why}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="rates" className="grid gap-3 pt-3">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Rate label="Dedicated post / video" value={money(plan.rateCard.dedicated)} />
-            <Rate label={plan.rateCard.secondaryLabel} value={money(plan.rateCard.secondary)} />
-            <Rate label="Whitelisting / usage (30 days)" value={money(plan.rateCard.usage)} />
-            <Rate label="3-post package" value={money(plan.rateCard.package3)} />
-          </div>
-          <p className="text-sm text-muted-foreground">{plan.rateCard.note}</p>
-          <p className="text-sm">
-            If this cadence holds for 90 days, typical views land around {compactNumber(plan.ninetyDay.viewsLow)}–
-            {compactNumber(plan.ninetyDay.viewsHigh)}. A believable deal range is {money(plan.ninetyDay.dealLow)}–
-            {money(plan.ninetyDay.dealHigh)}. {plan.ninetyDay.caveat}
-          </p>
-          <Button variant="outline" onClick={downloadKit}>
-            <Download data-icon="inline-start" />
-            Download media kit text
-          </Button>
-        </TabsContent>
-        <TabsContent value="avoid" className="grid gap-3 pt-3">
+        <TabsContent value="line" className="grid gap-3 pt-3">
           <Alert>
             <AlertTriangle />
-            <AlertTitle>The bot shop is not a gray area anymore</AlertTitle>
+            <AlertTitle>We do not sell the thing the apps already punish</AlertTitle>
             <AlertDescription>
-              Selling or buying fake followers, views, likes, or comments for a commercial purpose is an unfair
-              practice under 16 CFR 465.8. Civil penalties are assessed per violation.{" "}
+              Fake followers, likes, views, or comments for a commercial purpose are an FTC issue
+              under 16 CFR 465.8.{" "}
               <Link href="/brief" className="underline">
                 Read the brief
               </Link>
@@ -422,16 +393,6 @@ function Results({ plan }: { plan: GrowthPlan }) {
   );
 }
 
-function Stat({ label, value, hint }: { label: string; value: string; hint: string }) {
-  return (
-    <div className="rounded-lg bg-muted/50 px-3 py-2">
-      <p className="text-muted-foreground">{label}</p>
-      <p className="font-heading text-xl">{value}</p>
-      <p className="text-xs text-muted-foreground">{hint}</p>
-    </div>
-  );
-}
-
 function Rate({ label, value }: { label: string; value: string }) {
   return (
     <Card size="sm">
@@ -443,24 +404,24 @@ function Rate({ label, value }: { label: string; value: string }) {
   );
 }
 
-function mediaKitText(plan: GrowthPlan): string {
+function mediaKitText(plan: GrowthPlan, isPro: boolean): string {
   const { input, rateCard: card, handleLabel } = plan;
-  return [
+  const lines = [
     `Media kit — @${handleLabel}`,
-    `${platformLabels[input.platform]} · ${nicheLabels[input.niche]} · ${compactNumber(input.followers)} followers`,
-    `Typical views ${compactNumber(input.avgViews)} · likes ${compactNumber(input.avgLikes)} · comments ${compactNumber(input.avgComments)}`,
-    `Engagement ${percent(plan.engagementRate)} (band ~${percent(plan.benchmarkEngagement)})`,
+    `${platformLabels[input.platform]} · ${nicheLabels[input.niche]} · typical ${compactNumber(input.avgViews)} views`,
+    `Dedicated ${money(card.dedicated)} · ${card.secondaryLabel} ${money(card.secondary)} · 30-day usage ${money(card.usage)} · 3-post ${money(card.package3)}`,
     "",
-    "Packages",
-    `Dedicated: ${money(card.dedicated)}`,
-    `${card.secondaryLabel}: ${money(card.secondary)}`,
-    `Usage 30 days: ${money(card.usage)}`,
-    `Three-post package: ${money(card.package3)}`,
+    `Show: ${plan.series.name}`,
+    plan.series.description,
     "",
     card.note,
     "",
     "Authenticity",
     plan.verdictSummary,
-    "Liftline does not inflate metrics. Ask for a 12-post screenshot before you wire anything.",
-  ].join("\n");
+    "I send a 12-post screenshot. I do not sell fake followers.",
+  ];
+  if (!isPro) {
+    lines.push("", "Prepared with Liftline Free — upgrade for a kit without this line.");
+  }
+  return lines.join("\n");
 }

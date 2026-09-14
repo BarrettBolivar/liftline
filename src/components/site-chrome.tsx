@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/studio", label: "Growth studio" },
-  { href: "/brief", label: "Legal & money" },
+  { href: "/studio", label: "Studio" },
+  { href: "/pricing", label: "Pro" },
+  { href: "/brief", label: "Why this" },
 ];
 
 export function SiteHeader() {
